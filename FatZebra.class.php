@@ -31,7 +31,7 @@
 		/**
 		* The version of this library
 		*/
-		public $version = "1.1.5";
+		public $version = "1.2.0";
 
 		/**
 		* The URL of the Fat Zebra gateway
@@ -424,6 +424,11 @@
 		private $amount = 0.00;
 
 		/**
+		* The purchase currency
+		*/
+		private $currency = 'AUD';
+
+		/**
 		* The purchase reference
 		*/
 		private $reference = "";
@@ -461,9 +466,10 @@
 		* @param string $card_number the card number
 		* @param string $expiry the card expiry (mm/yyyy format)
 		* @param string $cvv the card verification value
+		* @param string $currency the purchase currency (defaults to AUD)
 		* @return PurchaseRequest
 		*/
-		public function __construct($amount, $reference, $card_holder, $card_number, $expiry, $cvv, $fraud_data = null) {
+		public function __construct($amount, $reference, $card_holder, $card_number, $expiry, $cvv, $fraud_data = null, $currency = 'AUD') {
 			if(is_null($amount)) throw new \InvalidArgumentException("Amount is a required field.");
 			if((float)$amount < 0) throw new \InvalidArgumentException("Amount is invalid.");
 			$this->amount = $amount;
@@ -483,6 +489,8 @@
 
 			if(is_null($cvv)) throw new \InvalidArgumentException("CVV is a required field.");
 			$this->cvv = $cvv;
+
+			$this->currency = $currency;
 
 			$this->fraud_data = $fraud_data;
 		}
@@ -505,7 +513,8 @@
 				"card_expiry" => $this->expiry,
 				"cvv" => $this->cvv,
 				"reference" => $this->reference,
-				"amount" => $int_amount
+				"amount" => $int_amount,
+				"currency" => $this->currency
 			);
 			if (!is_null($this->fraud_data)) {
 				$data['fraud'] = $this->fraud_data;
